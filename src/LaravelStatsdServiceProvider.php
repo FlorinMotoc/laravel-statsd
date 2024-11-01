@@ -14,7 +14,7 @@ class LaravelStatsdServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        if (env('FM_STATSD_CLIENT') == 'FM_STATSD_CLIENT_CUSTOM_DATADOG') {
+        if (env('FM_LARAVEL_STATSD_CLIENT') == 'FM_LARAVEL_STATSD_CLIENT_CUSTOM_DATADOG') {
             $this->app->singleton(StatsdClientInterface::class, CustomDatadogStatsdClient::class);
         }
         $this->app->singleton(CustomDatadogStatsdClient::class);
