@@ -14,7 +14,7 @@ class LaravelStatsdServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        if (env('STATSD_CLIENT') == 'STATSD_CLIENT_CUSTOM_DATADOG') {
+        if (env('FM_STATSD_CLIENT') == 'FM_STATSD_CLIENT_CUSTOM_DATADOG') {
             $this->app->singleton(StatsdClientInterface::class, CustomDatadogStatsdClient::class);
         }
         $this->app->singleton(CustomDatadogStatsdClient::class);
@@ -27,7 +27,7 @@ class LaravelStatsdServiceProvider extends ServiceProvider
 
     private function sendStatsdQueueJobsProcessingTime(): void
     {
-        if (!env('LARAVEL_STATSD_JOB_TIME_ENABLED')) {
+        if (!env('FM_LARAVEL_STATSD_JOB_TIME_ENABLED')) {
             return;
         }
 
