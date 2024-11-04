@@ -2,7 +2,10 @@
 
 namespace FlorinMotoc\LaravelStatsd;
 
+use FlorinMotoc\Statsd\ArrayStatsdClient;
 use FlorinMotoc\Statsd\CustomDatadogStatsdClient;
+use FlorinMotoc\Statsd\DatadogStatsdClient;
+use FlorinMotoc\Statsd\NullStatsdClient;
 use FlorinMotoc\Statsd\StatsdClientInterface;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
@@ -14,10 +17,22 @@ class LaravelStatsdServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        if (env('FM_LARAVEL_STATSD_CLIENT') == 'FM_LARAVEL_STATSD_CLIENT_CUSTOM_DATADOG') {
+        if (env('FM_LARAVEL_STATSD_CLIENT') == 'FM_LARAVEL_STATSD_CLIENT_DATADOG') {
+            $this->app->singleton(StatsdClientInterface::class, DatadogStatsdClient::class);
+        } elseif (env('FM_LARAVEL_STATSD_CLIENT') == 'FM_LARAVEL_STATSD_CLIENT_CUSTOM_DATADOG') {
             $this->app->singleton(StatsdClientInterface::class, CustomDatadogStatsdClient::class);
+        } elseif (env('FM_LARAVEL_STATSD_CLIENT') == 'FM_LARAVEL_STATSD_CLIENT_ARRAY') {
+            $this->app->singleton(StatsdClientInterface::class, ArrayStatsdClient::class);
+        } elseif (env('FM_LARAVEL_STATSD_CLIENT') == 'FM_LARAVEL_STATSD_CLIENT_NULL') {
+            $this->app->singleton(StatsdClientInterface::class, NullStatsdClient::class);
+        } else {
+            $this->app->singleton(StatsdClientInterface::class, NullStatsdClient::class);
         }
+
+        $this->app->singleton(DatadogStatsdClient::class);
         $this->app->singleton(CustomDatadogStatsdClient::class);
+        $this->app->singleton(ArrayStatsdClient::class);
+        $this->app->singleton(NullStatsdClient::class);
     }
 
     public function boot()
